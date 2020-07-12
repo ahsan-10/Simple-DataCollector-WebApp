@@ -4,7 +4,7 @@ import smtplib
 
 def send_email (email, height, average_height, count):
     from_email="schizophrenic.habib@gmail.com"
-    from_password="schizophrenia555"
+    from_password="############" #the password isnt required as it is already live on my heroku directory
     to_email=email
     
     subject="Height data"
@@ -15,7 +15,7 @@ def send_email (email, height, average_height, count):
     msg['To']=to_email
     msg['From']=from_email
     
-    gmail=smtplib.SMTP('smtp.gmail.com',587)
+    gmail=smtplib.SMTP('smtp.gmail.com:587')
     gmail.ehlo()
     gmail.starttls()
     gmail.login(from_email, from_password)

@@ -5,10 +5,12 @@ from sqlalchemy.sql import func
 
 
 app=Flask(__name__)
+#the first app.config is for local postgresql. it was tested before deploying it on live DB
 #app.config['SQLALCHEMY_DATABASE_URI']='postgresql://postgres:postgres123@localhost/height_collector'
 app.config['SQLALCHEMY_DATABASE_URI']='postgres://laoxqpvtujozvg:6e2402dc15b78ccf280973bed3a4318c93c68007b184f00ca81843c18e5a4ce2@ec2-54-152-175-141.compute-1.amazonaws.com:5432/ddiui9bukd9fuk?sslmode=require'
 db=SQLAlchemy(app)
-
+#we gotta create  this database in heroku addons. then in the heroku python window
+#e.g. >>from app import db >> db.create_all() >>exit()
 class Data(db.Model):
     __tablename__="data"
     id=db.Column(db.Integer, primary_key=True)
@@ -30,9 +32,10 @@ def success():
     if request.method=='POST':
         email=request.form["email_name"]
         height=request.form["height_name"]
-        
-        if db.session.query(Data).filter(Data.email_==email).count()==0:
-            data=Data(email,height)
+        #to be able to add rows with SQLALchemy we should point to the SQLAlchemy object
+        #which is db in this case.
+        if db.session.query(Data).filter(Data.email_==email).count()==0:   #this line says we input the email only if its unique and not available in db
+            data=Data(email,height) # create object instance of Data class
             db.session.add(data)
             db.session.commit()
             average_height=db.session.query(func.avg(Data.height_)).scalar()
